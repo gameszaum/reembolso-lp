@@ -1,103 +1,110 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
+import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
+
+export default function Rimborso() {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [paused, setPaused] = useState(false)
+  const [showButton, setShowButton] = useState(false)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const currentTime = videoRef.current?.currentTime || 0
+      if (currentTime >= 10) {
+        setShowButton(true)
+      }
+    }, 500)
+    return () => clearInterval(interval)
+  }, [])
+
+  const togglePlay = () => {
+    const video = videoRef.current
+    if (!video) return
+
+    if (video.paused) {
+      video.play()
+      setPaused(false)
+    } else {
+      video.pause()
+      setPaused(true)
+    }
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+    <main className="min-h-screen bg-white p-4">
+      <div className="bg-[#f8f8f8] shadow-lg rounded-xl w-full max-w-[900px] mx-auto p-4 sm:p-8 flex flex-col items-center">
+
         <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
+          src="/comprasicura.png"
+          alt="Logo CompraSicura"
+          width={200}
+          height={200}
+          className="rounded-full shadow-lg mb-6"
           priority
         />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        <div className="relative w-full">
+          <video
+            ref={videoRef}
+            className="w-full min-h-[220px] rounded-xl shadow-lg object-cover"
+            src="/video.mp4"
+            autoPlay
+            controls={false}
+          />
+          <button
+            onClick={togglePlay}
+            className="absolute inset-0 w-full h-full bg-transparent hover:bg-transparent focus:bg-transparent flex items-center justify-center z-10"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <span className={`text-white text-[60px] pointer-events-none ${paused ? 'animate-pulse-scale' : ''}`}>
+              {paused ? '▶️' : ''}
+            </span>
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+
+        {showButton && (
+          <button
+            className="mt-8 bg-[#f5a800] text-white text-lg font-semibold px-6 py-3 rounded-lg hover:bg-[#e69500] hover:cursor-pointer transition-colors duration-300 shadow-md pulse-scale"
+            onClick={() => window.location.href = 'https://checkout.imperialpay.com.br/checkout/cm938bmc701qs7nbhl4exa6wi?offer=7UOCIS5'}
+          >
+            Procedi con il rimborso
+          </button>
+        )}
+      </div>
+      <div className="block sm:hidden w-full mt-10 overflow-hidden">
+        {/* <h2 className="text-lg font-semibold text-gray-800 mb-4">Cosa dicono i nostri clienti</h2> */}
+
+        <div className="relative w-full overflow-hidden px-2 py-4">
+          <div className="grid grid-rows-2 grid-cols-2 gap-3 w-[150%] animate-marquee-2x2">
+            {[
+              { name: "Luca R.", stars: 5, message: "Servizio clienti impeccabile! Ho ricevuto il rimborso rapidamente. Comprerò di nuovo, grazie!", img: 'luca' },
+              { name: "Giulia M.", stars: 4, message: "Avevo un problema con il prodotto, ma il rimborso è stato facile e veloce. Ottimo supporto!", img: 'giulia' },
+              { name: "Marco D.", stars: 5, message: "Nonostante l'inconveniente, l'assistenza è stata perfetta. Riacquisterò senza dubbi.", img: 'marco' },
+              { name: "Chiara B.", stars: 5, message: "Mi hanno aiutato subito e ho ricevuto il rimborso in pochi giorni. Bravissimi!", img: 'chiara' },
+            ].map((review, idx) => (
+              <div
+                key={`${review.img}-${idx}`}
+                className="min-w-[160px] bg-white rounded-xl shadow-md p-3 flex-shrink-0"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <img
+                    src={`/avatars/${review.img}.png`}
+                    alt={review.name}
+                    className="w-8 h-8 rounded-full object-cover border border-gray-200 shadow-sm"
+                  />
+                  <div>
+                    <div className="font-semibold text-black text-sm">{review.name}</div>
+                    <div className="text-yellow-500 text-xs">
+                      {'★'.repeat(review.stars)}{'☆'.repeat(5 - review.stars)}
+                    </div>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-700">{review.message}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </main>
+  )
 }
